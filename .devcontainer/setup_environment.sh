@@ -1,23 +1,36 @@
-# Install "devkitARM"  by copying and modifying the install script found at https://apt.devkitpro.org/install-devkitpro-pacman
-# This script should be run as root
+# Script to setup the dev tools
+# This should be run as root, or using sudo
 
-## ensure apt is set up to work with https sources
-apt install -y apt-transport-https
+# 1. Install "devkitARM"
+## Install pacman
+apk add pacman
 
-## Store devkitPro gpg key locally if we don't have it already
-if ! [ -f /usr/local/share/keyring/devkitpro-pub.gpg ]; then
-  mkdir -p /usr/local/share/keyring/
-  wget -O /usr/local/share/keyring/devkitpro-pub.gpg https://apt.devkitpro.org/devkitpro-pub.gpg
-fi
+## Update pacman install to allow installing devkitARM
+pacman-key --init
 
-## Add the devkitPro apt repository if we don't have it set up already
-if ! [ -f /etc/apt/sources.list.d/devkitpro.list ]; then
-  echo "deb [signed-by=/usr/local/share/keyring/devkitpro-pub.gpg] https://apt.devkitpro.org stable main" > /etc/apt/sources.list.d/devkitpro.list
-fi
+DEVKITPRO=/opt/devkitpro
+DEVKITARM=/opt/devkitpro/devkitARM
+DEVKITPPC=/opt/devkitpro/devkitPPC
+
+pacman-key --recv BC26F752D25B92CE272E0F44F7FD5492264BB9D0 --keyserver keyserver.ubuntu.com
+pacman-key --lsign BC26F752D25B92CE272E0F44F7FD5492264BB9D0
+
+pacman --noconfirm -U https://pkg.devkitpro.org/devkitpro-keyring.pkg.tar.zst
+
+## Add devkit pro repos
+echo "[dkp-libs]" > /etc/pacman.conf
+echo "Server = https://pkg.devkitpro.org/packages" > /etc/pacman.conf
+
+echo "[dkp-linux-musl]" > /etc/pacman.conf
+echo "Server =  https://pkg.devkitpro.org/packages/linux-musl/$arch/" > /etc/pacman.conf
 
 ## Install devkitPro pacman
-apt update
-apt install -y devkitpro-pacman
+pacman -Syu
 
 ## finally install the GBA dev tools
 dkp-pacman --noconfirm -S gba-dev
+
+# 2. Install a GBA emulator for debugging
+apk add flatpak
+flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+flatpak install --assumeyes flathub io.mgba.mGBA
