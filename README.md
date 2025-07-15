@@ -1,0 +1,1 @@
+This repo is an experiment to see if I can get a working GBA dev environment in a devcontainer.
