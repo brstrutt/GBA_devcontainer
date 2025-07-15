@@ -17,5 +17,12 @@
 		"DEVKITPRO": "/opt/devkitpro",
 		"DEVKITARM": "/opt/devkitpro/devkitARM",
 		"DEVKITPPC": "/opt/devkitpro/devkitPPC"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-vscode.makefile-tools"
+			]
+		}
 	}
 }
